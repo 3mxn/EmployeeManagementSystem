@@ -12,7 +12,7 @@ function EmployeeList() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   const loadEmployees = () => {
-    fetch("https://localhost:YOUR_API_PORT/employees")
+    fetch("https://localhost:7116/employees")
       .then((response) => response.json())
       .then((data) => setEmployees(data));
   };
@@ -22,7 +22,7 @@ function EmployeeList() {
   }, []);
 
   const deleteEmployee = (id: number) => {
-    fetch(`https://localhost:YOUR_API_PORT/employees/${id}`, {
+    fetch(`https://localhost:7116/employees/${id}`, {
       method: "DELETE",
     }).then(() => loadEmployees());
   };
@@ -39,7 +39,7 @@ function EmployeeList() {
   const saveEmployee = () => {
     if (selectedEmployee) {
       fetch(
-        `https://localhost:YOUR_API_PORT/employees/${selectedEmployee.employeeId}`,
+        `https://localhost:7116/employees/${selectedEmployee.employeeId}`,
         {
           method: "PUT",
           headers: {
