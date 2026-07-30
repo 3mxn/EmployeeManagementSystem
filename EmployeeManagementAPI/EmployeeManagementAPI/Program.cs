@@ -68,4 +68,17 @@ app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
     return Results.Ok(employee);
 });
 
+app.MapPost("/employees/fill", async (EmployeeDbContext db) =>
+{
+    foreach (var employee in db.Employees)
+    {
+        employee.Name = $"Employee {employee.EmployeeId}";
+        employee.Email = $"employee{employee.EmployeeId}@gmail.com";
+        employee.Role = "Developer";
+    }
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
 app.Run();
