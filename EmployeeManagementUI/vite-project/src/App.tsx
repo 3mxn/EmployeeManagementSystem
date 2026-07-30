@@ -1,10 +1,21 @@
+import {BrowserRouter,Routes,Route} from "react-router-dom"
 import EmployeeList from "./Components/EmployeeList";
+import Home from "./pages/Home";
+import Employees from "./pages/Employees";
 function App() {
   return (
-    <div className="container mt-4">
-      <h2>Employee Management</h2>
-      <EmployeeList/>
-    </div>
+    <BrowserRouter>
+    <Routes>
+      <Route
+      path="/"
+      element={<Home/>}
+      />
+      <Route
+      path="/employees"
+      element={<Employees/>}
+      />
+    </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -80,7 +80,13 @@ function EmployeeList() {
     }).then(() => loadEmployees());
   }
 };
-
+const fillEmployees = () => {
+  fetch("https://localhost:7116/employees/fill", {
+    method: "POST",
+  }).then(() => {
+    loadEmployees();
+  });
+};
   return (
     <div className="container mt-4">
       <h3 className="mb-3">Employee List</h3>
@@ -112,6 +118,12 @@ function EmployeeList() {
   >
     Add Employee
   </button>
+  <button
+  className="btn btn-success mb-3"
+  onClick={fillEmployees}
+>
+  Fill Empty Employees
+</button>
 </div>
 
       <div className="table-responsive">
@@ -234,6 +246,7 @@ function EmployeeList() {
         </div>
       </div>
     </div>
+    
   );
 }
 
