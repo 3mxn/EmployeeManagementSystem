@@ -10,7 +10,9 @@ type Employee = {
 function EmployeeList() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-
+  const[name,setName]=useState("");
+  const[email,setEmail]=useState("");
+  const[role,setRole]=useState("");
   const loadEmployees = () => {
     fetch("https://localhost:7116/employees")
       .then((response) => response.json())
@@ -51,17 +53,68 @@ function EmployeeList() {
       });
     }
   };
+  const addEmployee=()=>{
+    fetch("https://localhost:7116/employees",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify({
+        name,
+        email,
+        role,
+      }),
+    }).then(()=>{
+        loadEmployees();
+        setName("");
+        setEmail("");
+        setRole("");
+      });
+    
+
+  }
   const deleteEmployee = (id: number) => {
   if (window.confirm("Are you sure you want to delete this employee?")) {
-    fetch(`https://localhost:YOUR_API_PORT/employees/${id}`, {
+    fetch(`https://localhost:7116/employees/${id}`, {
       method: "DELETE",
     }).then(() => loadEmployees());
   }
 };
 
   return (
-    <div className="table-responsive">
-      <h3>Employee List</h3>
+    <div className="container mt-4">
+      <h3 className="mb-3">Employee List</h3>
+      <div className="mb-4">
+  <input
+    className="form-control mb-2"
+    placeholder="Name"
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+  />
+
+  <input
+    className="form-control mb-2"
+    placeholder="Email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+  />
+
+  <input
+    className="form-control mb-2"
+    placeholder="Role"
+    value={role}
+    onChange={(e) => setRole(e.target.value)}
+  />
+
+  <button
+    className="btn btn-success"
+    onClick={addEmployee}
+  >
+    Add Employee
+  </button>
+</div>
+
+      <div className="table-responsive">
 
       <table className="table table-bordered">
         <thead>
@@ -101,7 +154,7 @@ function EmployeeList() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
 
       <div
         className="modal fade"

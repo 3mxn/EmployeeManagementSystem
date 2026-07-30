@@ -60,5 +60,12 @@ app.MapDelete("/employees/{id}", async (int id, EmployeeDbContext db) =>
     await db.SaveChangesAsync();
     return Results.Ok();
 });
+app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
+{
+    db.Employees.Add(employee);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(employee);
+});
 
 app.Run();
