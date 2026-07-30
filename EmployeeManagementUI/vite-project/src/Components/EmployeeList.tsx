@@ -21,12 +21,6 @@ function EmployeeList() {
     loadEmployees();
   }, []);
 
-  const deleteEmployee = (id: number) => {
-    fetch(`https://localhost:7116/employees/${id}`, {
-      method: "DELETE",
-    }).then(() => loadEmployees());
-  };
-
   const updateEmployee = (field: keyof Employee, value: string) => {
     if (selectedEmployee) {
       setSelectedEmployee({
@@ -37,6 +31,10 @@ function EmployeeList() {
   };
 
   const saveEmployee = () => {
+    if(selectedEmployee && !selectedEmployee.email.includes("@")){
+      alert("Please enter a valid email address.");
+      return;
+    }
     if (selectedEmployee) {
       fetch(
         `https://localhost:7116/employees/${selectedEmployee.employeeId}`,
@@ -53,9 +51,16 @@ function EmployeeList() {
       });
     }
   };
+  const deleteEmployee = (id: number) => {
+  if (window.confirm("Are you sure you want to delete this employee?")) {
+    fetch(`https://localhost:YOUR_API_PORT/employees/${id}`, {
+      method: "DELETE",
+    }).then(() => loadEmployees());
+  }
+};
 
   return (
-    <div>
+    <div className="table-responsive">
       <h3>Employee List</h3>
 
       <table className="table table-bordered">
@@ -115,6 +120,7 @@ function EmployeeList() {
                 data-bs-dismiss="modal"
               ></button>
             </div>
+            
 
             <div className="modal-body">
               {selectedEmployee && (
@@ -151,9 +157,26 @@ function EmployeeList() {
                       }
                     />
                   </div>
+                  
                 </>
               )}
             </div>
+             <div className="modal-footer">
+        <button
+          className="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+
+        <button
+          className="btn btn-primary"
+          onClick={saveEmployee}
+          data-bs-dismiss="modal"
+        >
+          Save Changes
+        </button>
+      </div>
           </div>
         </div>
       </div>
