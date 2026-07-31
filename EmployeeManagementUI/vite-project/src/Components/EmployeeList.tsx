@@ -14,22 +14,20 @@ function EmployeeList() {
   const[email,setEmail]=useState("");
   const[role,setRole]=useState("");
   const[currentPage,setCurrentPage]=useState(1);
-  const employeesPerPage=5
-  const lastEmployee=currentPage*employeesPerPage;
-  const firstEmployee=lastEmployee-employeesPerPage;
-
-  const currentEmployees=employees.slice(firstEmployee,lastEmployee);
-  const totalPages=Math.ceil(employees.length/employeesPerPage);
-
+  const[totalCount,setTotalCount]=useState(0);
+  const pageSize=5;  
   const loadEmployees = () => {
-    fetch("https://localhost:7116/employees?page=1&pageSize=5")
+    fetch(`https://localhost:7116/employees?page=${currentPage}&pageSize=${pageSize}`)
       .then((response) => response.json())
-      .then((data) => setEmployees(data));
+      .then((data) => {
+        setEmployees(data.employees);
+        setTotalCount(data.totalCount);
+      });
   };
 
   useEffect(() => {
     loadEmployees();
-  }, []);
+  }, [currentPage]);
 
   const updateEmployee = (field: keyof Employee, value: string) => {
     if (selectedEmployee) {
@@ -148,7 +146,7 @@ const fillEmployees = () => {
         </thead>
 
         <tbody>
-          {currentEmployees.map((employee) => (
+          {employees.map((employee) => (
             <tr key={employee.employeeId}>
               <td>{employee.employeeId}</td>
               <td>{employee.name}</td>
@@ -185,13 +183,12 @@ const fillEmployees = () => {
           Previous
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          
         </span>
       </div>
       <button
       className="btn btn-secondary"
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
+          
       >
         Next
       </button>
