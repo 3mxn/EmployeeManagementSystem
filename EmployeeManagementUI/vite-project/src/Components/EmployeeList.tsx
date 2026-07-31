@@ -13,8 +13,16 @@ function EmployeeList() {
   const[name,setName]=useState("");
   const[email,setEmail]=useState("");
   const[role,setRole]=useState("");
+  const[currentPage,setCurrentPage]=useState(1);
+  const employeesPerPage=5
+  const lastEmployee=currentPage*employeesPerPage;
+  const firstEmployee=lastEmployee-employeesPerPage;
+
+  const currentEmployees=employees.slice(firstEmployee,lastEmployee);
+  const totalPages=Math.ceil(employees.length/employeesPerPage);
+
   const loadEmployees = () => {
-    fetch("https://localhost:7116/employees")
+    fetch("https://localhost:7116/employees?page=1&pageSize=5")
       .then((response) => response.json())
       .then((data) => setEmployees(data));
   };
@@ -140,7 +148,7 @@ const fillEmployees = () => {
         </thead>
 
         <tbody>
-          {employees.map((employee) => (
+          {currentEmployees.map((employee) => (
             <tr key={employee.employeeId}>
               <td>{employee.employeeId}</td>
               <td>{employee.name}</td>
@@ -167,7 +175,26 @@ const fillEmployees = () => {
           ))}
         </tbody>
       </table></div>
-
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        
+        <button
+         className="btn btn-secondary"
+         disabled={currentPage === 1}
+         onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+      </div>
+      <button
+      className="btn btn-secondary"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(currentPage + 1)}
+      >
+        Next
+      </button>
       <div
         className="modal fade"
         id="editModal"

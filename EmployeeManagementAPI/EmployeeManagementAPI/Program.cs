@@ -21,9 +21,13 @@ app.UseCors("ReactApp");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/employees", async (EmployeeDbContext db) =>
+app.MapGet("/employees", async (int Page,int PageSize,EmployeeDbContext db) =>
 {
-    return await db.Employees.ToListAsync();
+    var totalCount = await db.Employees.CountAsync();
+    var employees=await db.Employees
+    .Skip((page - 1) * pageSize)
+    .Take(pageSize)
+    .ToListAsync();
 });
 app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
 {
@@ -52,20 +56,13 @@ app.MapPut("/employees/{id}",async(int id,Employee updatedEmployee,EmployeeDbCon
 app.MapDelete("/employees/{id}", async (int id, EmployeeDbContext db) =>
 {
     var employee = await db.Employees.FindAsync(id);
-    if (employee==null)
+    if (employee == null)
     {
         return Results.NotFound();
     }
     db.Employees.Remove(employee);
     await db.SaveChangesAsync();
     return Results.Ok();
-});
-app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
-{
-    db.Employees.Add(employee);
-    await db.SaveChangesAsync();
-
-    return Results.Ok(employee);
 });
 
 app.MapPost("/employees/fill", async (EmployeeDbContext db) =>
@@ -81,4 +78,5 @@ app.MapPost("/employees/fill", async (EmployeeDbContext db) =>
 
     return Results.Ok();
 });
+
 app.Run();
