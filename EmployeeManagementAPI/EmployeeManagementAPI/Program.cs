@@ -21,13 +21,18 @@ app.UseCors("ReactApp");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/employees", async (int Page,int PageSize,EmployeeDbContext db) =>
+app.MapGet("/employees", async (int page,int pageSize,EmployeeDbContext db) =>
 {
     var totalCount = await db.Employees.CountAsync();
     var employees=await db.Employees
     .Skip((page - 1) * pageSize)
     .Take(pageSize)
     .ToListAsync();
+    return new
+    {
+        employees,
+        totalCount
+    };
 });
 app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
 {
