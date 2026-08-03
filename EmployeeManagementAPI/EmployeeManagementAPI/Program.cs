@@ -21,18 +21,30 @@ app.UseCors("ReactApp");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/employees", async (int page,int pageSize,EmployeeDbContext db) =>
+app.MapGet("/employees", async (
+    int page,
+    int pageSize,
+    string? search,
+    EmployeeDbContext db) =>
 {
-    var totalCount = await db.Employees.CountAsync();
-    var employees=await db.Employees
-    .Skip((page - 1) * pageSize)
+ var query=db.Employees.AsQueryable();
+  if(!string.IsNullOrWhiteSpace(search))
+    {
+        query=query.Where(e=>
+        e.Name.Contains(search)||
+        e.Email.Contains(search)||
+        e.Role.Contains(search));
+    }
+  var totalCount=await query.CountAsync();
+  var employees=await query 
+    .Skip((page-1)*pageSize)
     .Take(pageSize)
     .ToListAsync();
-    return new
+    return Results.Ok(new
     {
         employees,
         totalCount
-    };
+    });
 });
 app.MapPost("/employees", async (Employee employee, EmployeeDbContext db) =>
 {

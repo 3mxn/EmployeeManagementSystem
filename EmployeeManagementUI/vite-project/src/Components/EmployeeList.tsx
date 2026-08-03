@@ -15,9 +15,11 @@ function EmployeeList() {
   const[role,setRole]=useState("");
   const[currentPage,setCurrentPage]=useState(1);
   const[totalCount,setTotalCount]=useState(0);
+  const [search, setSearch] = useState("");
   const pageSize=5;  
+  const totalPages = Math.ceil(totalCount / pageSize);
   const loadEmployees = () => {
-    fetch(`https://localhost:7116/employees?page=${currentPage}&pageSize=${pageSize}`)
+    fetch(`https://localhost:7116/employees?page=${currentPage}&pageSize=${pageSize}&search=${search}`)
       .then((response) => response.json())
       .then((data) => {
         setEmployees(data.employees);
@@ -27,7 +29,7 @@ function EmployeeList() {
 
   useEffect(() => {
     loadEmployees();
-  }, [currentPage]);
+  }, [currentPage,search]);
 
   const updateEmployee = (field: keyof Employee, value: string) => {
     if (selectedEmployee) {
@@ -98,6 +100,17 @@ const fillEmployees = () => {
       <h3 className="mb-3">Employee List</h3>
       <div className="mb-4">
   <input
+  className="form-control mb-3"
+  placeholder="Search employees.."
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  }}
+  />
+ </div>
+ 
+  <input
     className="form-control mb-2"
     placeholder="Name"
     value={name}
@@ -130,7 +143,7 @@ const fillEmployees = () => {
 >
   Fill Empty Employees
 </button>
-</div>
+
 
       <div className="table-responsive">
 
@@ -188,7 +201,8 @@ const fillEmployees = () => {
       </div>
       <button
       className="btn btn-secondary"
-          
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage(currentPage + 1)}    
       >
         Next
       </button>
